@@ -1,32 +1,38 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Aoe3
 {
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        public SpriteBatch _spriteBatch;
+       
         Texture2D whiteRectangle;
+
+        Song song;
 
         //bg
         Texture2D background;
         bool backgroundIsActive;
+        bool musicIsActive;
         Rectangle mainFrame;
 
-
+        public List<Menu> mainmenu=new List<Menu>();
+        public List<Menu> settingsmenu= new List<Menu>();
 
         Vector2 vector;
-        private SpriteFont textMenu;
+        public SpriteFont textMenu;
         Font font = new Font(10, "Segoe UI", "Bold");
         //Menu start = new Menu(200, 50, 300, 20, Microsoft.Xna.Framework.Color.Black, "Start");
 
-        Menu start = new Menu(900, 100, 500, 420, Microsoft.Xna.Framework.Color.Black, "Start",true);
-        Menu setting = new Menu(900, 100, 500, 540, Microsoft.Xna.Framework.Color.Black, "Settings",true);
-        Menu exit = new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "Exit",true);
-        Menu soud = new Menu(100, 100, 1, 1, Microsoft.Xna.Framework.Color.Black, "Sound", false);
-        Menu backbtn = new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "back", false);
+        
 
 
 
@@ -46,9 +52,21 @@ namespace Aoe3
             
         }
 
+        
+
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            
+            
+            mainmenu.Add(new Menu(900, 100, 500, 420, Microsoft.Xna.Framework.Color.Black, "Start", true));
+            mainmenu.Add(new Menu(900, 100, 500, 540, Microsoft.Xna.Framework.Color.Black, "Settings", true));
+            mainmenu.Add(new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "Exit", true));
+
+            settingsmenu.Add(new Menu(140, 100, 1, 1, Microsoft.Xna.Framework.Color.Black, "SoundUp", false));
+            settingsmenu.Add(new Menu(900, 100, 500, 880, Microsoft.Xna.Framework.Color.Black, "back", false));
+            settingsmenu.Add(new Menu(140, 100, 1, 101, Microsoft.Xna.Framework.Color.Black, "SoundDown", false));
+
 
             base.Initialize();
         }
@@ -56,6 +74,18 @@ namespace Aoe3
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            song = Content.Load<Song>("mainmenu");
+
+            MediaPlayer.Play(song);
+            MediaPlayer.IsRepeating = true;
+
+            musicIsActive = true;
+
+
+
+
+
             mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             background = Content.Load<Texture2D>(@"bg");
             backgroundIsActive = true;
@@ -67,6 +97,12 @@ namespace Aoe3
             // TODO: use this.Content to load your game content here
         }
 
+       
+
+        
+
+
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -74,53 +110,81 @@ namespace Aoe3
             var mouseState = Mouse.GetState();
             var mousePosition = new Point(mouseState.X, mouseState.Y);
 
-            if(start.rect.Contains(mousePosition)&&start.isActive==true)
+            if (mainmenu[0].rect.Contains(mousePosition) && mainmenu[0].isActive == true)
             {
-               
+
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    start.isActive = false;
-                    setting.isActive = false;
-                    exit.isActive = false;
+                    mainmenu[1].isActive = false;
+                    mainmenu[0].isActive = false;
+                    mainmenu[2].isActive = false;
                     backgroundIsActive = false;
                 }
 
             }
 
-            if(backbtn.rect.Contains(mousePosition)&&backbtn.isActive==true)
+            if (settingsmenu[1].rect.Contains(mousePosition) && settingsmenu[1].isActive == true)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    start.isActive = true;
-                    setting.isActive = true;
-                    exit.isActive = true;
-                    backbtn.isActive = false;
-                    soud.isActive = false;
+                    mainmenu[0].isActive = true;
+                    mainmenu[1].isActive = true;
+                    mainmenu[2].isActive = true;
+                    settingsmenu[1].isActive = false;
+                    settingsmenu[0].isActive = false;
+                    settingsmenu[2].isActive = false;
                 }
             }
 
-            if(setting.rect.Contains(mousePosition)&&setting.isActive==true)
+            if(settingsmenu[0].rect.Contains(mousePosition)&&settingsmenu[0].isActive==true)
             {
+               
                 if(mouseState.LeftButton==ButtonState.Pressed)
                 {
-                    soud.isActive = true;
-                    backbtn.isActive = true;
-                    start.isActive = false;
-                    setting.isActive = false;
-                    exit.isActive = false;
+                   
+                        MediaPlayer.Volume += 0.1f;
+                       
+                   
+                   
+                }
+            }
+
+            if(settingsmenu[2].rect.Contains(mousePosition)&&settingsmenu[2].isActive==true)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                { 
+                    MediaPlayer.Volume -= 0.1f;
+                }
+
+                   
+                    
+            }
+
+            if (mainmenu[1].rect.Contains(mousePosition) && mainmenu[1].isActive == true)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    settingsmenu[0].isActive = true;
+                    settingsmenu[1].isActive = true;
+                    settingsmenu[2].isActive = true;
+                    mainmenu[0].isActive = false;
+                    mainmenu[1].isActive = false;
+                    mainmenu[2].isActive = false;
 
                 }
             }
-            if(exit.rect.Contains(mousePosition)&&exit.isActive==true&&backbtn.isActive!=false)
+
+            if (mainmenu[2].rect.Contains(mousePosition) && mainmenu[2].isActive == true)
             {
-                
+
+
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     Exit();
                 }
+
             }
-            
-            
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -139,41 +203,48 @@ namespace Aoe3
             
 
 
-            //_spriteBatch.Draw(whiteRectangle, new Rectangle(menu.X,menu.Y,menu.Width,menu.Height));
+          // _spriteBatch.Draw(whiteRectangle, new Rectangle(menu.X,menu.Y,menu.Width,menu.Height));
             Color c =Color.Black;
             Color c1 = Color.Gold;
-            if(start.isActive==true)
+            if (mainmenu[0].isActive == true)
             {
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(start.X-1, start.Y-1, start.Width+2, start.Height+2), c1);
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(start.X, start.Y, start.Width, start.Height), c);
-            _spriteBatch.DrawString(textMenu, $"{start.text}", new Vector2(start.X + 20, start.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[0].X - 1, mainmenu[0].Y - 1, mainmenu[0].Width + 2, mainmenu[0].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[0].X, mainmenu[0].Y, mainmenu[0].Width, mainmenu[0].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{mainmenu[0].text}", new Vector2(mainmenu[0].X + 20, mainmenu[0].Y + 10), Microsoft.Xna.Framework.Color.Coral);
             }
-            if(setting.isActive==true)
+            if (mainmenu[1].isActive == true)
             {
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(setting.X - 1, setting.Y - 1, setting.Width + 2, setting.Height + 2), c1);
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(setting.X, setting.Y, setting.Width, setting.Height), c);
-            _spriteBatch.DrawString(textMenu, $"{setting.text}", new Vector2(setting.X + 20, setting.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[1].X - 1, mainmenu[1].Y - 1, mainmenu[1].Width + 2, mainmenu[1].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[1].X, mainmenu[1].Y, mainmenu[1].Width, mainmenu[1].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{mainmenu[1].text}", new Vector2(mainmenu[1].X + 20, mainmenu[1].Y + 10), Microsoft.Xna.Framework.Color.Coral);
 
             }
-            if(exit.isActive==true)
+            if (mainmenu[2].isActive == true)
             {
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(exit.X - 1, exit.Y - 1, exit.Width + 2, exit.Height + 2), c1);
-            _spriteBatch.Draw(whiteRectangle, new Rectangle(exit.X, exit.Y, exit.Width, exit.Height), c);
-            _spriteBatch.DrawString(textMenu, $"{exit.text}", new Vector2(exit.X + 20, exit.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[2].X - 1, mainmenu[2].Y - 1, mainmenu[2].Width + 2, mainmenu[2].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(mainmenu[2].X, mainmenu[2].Y, mainmenu[2].Width, mainmenu[2].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{mainmenu[2].text}", new Vector2(mainmenu[2].X + 20, mainmenu[2].Y + 10), Microsoft.Xna.Framework.Color.Coral);
             }
 
-            if (soud.isActive == true)
+            if (settingsmenu[0].isActive == true)
             {
-                _spriteBatch.Draw(whiteRectangle, new Rectangle(soud.X - 1, soud.Y - 1, soud.Width + 2, soud.Height + 2), c1);
-                _spriteBatch.Draw(whiteRectangle, new Rectangle(soud.X, soud.Y, soud.Width, soud.Height), c);
-                _spriteBatch.DrawString(textMenu, $"{soud.text}", new Vector2(soud.X + 20, soud.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[0].X - 1, settingsmenu[0].Y - 1, settingsmenu[0].Width + 2, settingsmenu[0].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[0].X, settingsmenu[0].Y, settingsmenu[0].Width, settingsmenu[0].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{settingsmenu[0].text}", new Vector2(settingsmenu[0].X + 10, settingsmenu[0].Y + 10), Microsoft.Xna.Framework.Color.Coral);
             }
 
-            if (backbtn.isActive == true)
+            if (settingsmenu[2].isActive == true)
             {
-                _spriteBatch.Draw(whiteRectangle, new Rectangle(backbtn.X - 1, backbtn.Y - 1, backbtn.Width + 2, backbtn.Height + 2), c1);
-                _spriteBatch.Draw(whiteRectangle, new Rectangle(backbtn.X, backbtn.Y, backbtn.Width, backbtn.Height), c);
-                _spriteBatch.DrawString(textMenu, $"{backbtn.text}", new Vector2(backbtn.X + 20, backbtn.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[2].X - 1, settingsmenu[2].Y - 1, settingsmenu[2].Width + 2, settingsmenu[2].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[2].X, settingsmenu[2].Y, settingsmenu[2].Width, settingsmenu[2].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{settingsmenu[2].text}", new Vector2(settingsmenu[2].X + 10, settingsmenu[2].Y + 10), Microsoft.Xna.Framework.Color.Coral);
+            }
+
+            if (settingsmenu[1].isActive == true)
+            {
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[1].X - 1, settingsmenu[1].Y - 1, settingsmenu[1].Width + 2, settingsmenu[1].Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(settingsmenu[1].X, settingsmenu[1].Y, settingsmenu[1].Width, settingsmenu[1].Height), c);
+                _spriteBatch.DrawString(textMenu, $"{settingsmenu[1].text}", new Vector2(settingsmenu[1].X + 20, settingsmenu[1].Y + 10), Microsoft.Xna.Framework.Color.Coral);
             }
 
 

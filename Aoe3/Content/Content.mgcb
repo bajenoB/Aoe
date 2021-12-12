@@ -32,6 +32,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Font.spritefont
 
+#begin mainmenu.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:mainmenu.mp3
+
 #begin sea.png
 /importer:TextureImporter
 /processor:TextureProcessor
