@@ -25,10 +25,12 @@ namespace Aoe3
         Menu start = new Menu(900, 100, 500, 420, Microsoft.Xna.Framework.Color.Black, "Start",true);
         Menu setting = new Menu(900, 100, 500, 540, Microsoft.Xna.Framework.Color.Black, "Settings",true);
         Menu exit = new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "Exit",true);
-        
-       
+        Menu soud = new Menu(100, 100, 1, 1, Microsoft.Xna.Framework.Color.Black, "Sound", false);
+        Menu backbtn = new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "back", false);
 
-        
+
+
+
 
 
         public Game1()
@@ -84,7 +86,32 @@ namespace Aoe3
                 }
 
             }
-            if(exit.rect.Contains(mousePosition)&&exit.isActive==true)
+
+            if(backbtn.rect.Contains(mousePosition)&&backbtn.isActive==true)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    start.isActive = true;
+                    setting.isActive = true;
+                    exit.isActive = true;
+                    backbtn.isActive = false;
+                    soud.isActive = false;
+                }
+            }
+
+            if(setting.rect.Contains(mousePosition)&&setting.isActive==true)
+            {
+                if(mouseState.LeftButton==ButtonState.Pressed)
+                {
+                    soud.isActive = true;
+                    backbtn.isActive = true;
+                    start.isActive = false;
+                    setting.isActive = false;
+                    exit.isActive = false;
+
+                }
+            }
+            if(exit.rect.Contains(mousePosition)&&exit.isActive==true&&backbtn.isActive!=false)
             {
                 
                 if (mouseState.LeftButton == ButtonState.Pressed)
@@ -105,7 +132,11 @@ namespace Aoe3
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(background, mainFrame, Color.White);
+            if(backgroundIsActive==true)
+            {
+                _spriteBatch.Draw(background, mainFrame, Color.White);
+            }
+            
 
 
             //_spriteBatch.Draw(whiteRectangle, new Rectangle(menu.X,menu.Y,menu.Width,menu.Height));
@@ -130,7 +161,21 @@ namespace Aoe3
             _spriteBatch.Draw(whiteRectangle, new Rectangle(exit.X, exit.Y, exit.Width, exit.Height), c);
             _spriteBatch.DrawString(textMenu, $"{exit.text}", new Vector2(exit.X + 20, exit.Y + 10), Microsoft.Xna.Framework.Color.Coral);
             }
-            
+
+            if (soud.isActive == true)
+            {
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(soud.X - 1, soud.Y - 1, soud.Width + 2, soud.Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(soud.X, soud.Y, soud.Width, soud.Height), c);
+                _spriteBatch.DrawString(textMenu, $"{soud.text}", new Vector2(soud.X + 20, soud.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+            }
+
+            if (backbtn.isActive == true)
+            {
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(backbtn.X - 1, backbtn.Y - 1, backbtn.Width + 2, backbtn.Height + 2), c1);
+                _spriteBatch.Draw(whiteRectangle, new Rectangle(backbtn.X, backbtn.Y, backbtn.Width, backbtn.Height), c);
+                _spriteBatch.DrawString(textMenu, $"{backbtn.text}", new Vector2(backbtn.X + 20, backbtn.Y + 10), Microsoft.Xna.Framework.Color.Coral);
+            }
+
 
 
 
