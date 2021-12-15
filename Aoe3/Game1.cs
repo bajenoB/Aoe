@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace Aoe3
@@ -12,31 +9,32 @@ namespace Aoe3
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        public SpriteBatch _spriteBatch;
-       
+        private SpriteBatch _spriteBatch;
         Texture2D whiteRectangle;
-
-        Song song;
 
         //bg
         Texture2D background;
+        Texture2D grass;
         bool backgroundIsActive;
-        bool musicIsActive;
         Rectangle mainFrame;
 
-        public List<Menu> mainmenu=new List<Menu>();
-        public List<Menu> settingsmenu= new List<Menu>();
 
+        Map map;
         Vector2 vector;
-        public SpriteFont textMenu;
+        private SpriteFont textMenu;
         Font font = new Font(10, "Segoe UI", "Bold");
         //Menu start = new Menu(200, 50, 300, 20, Microsoft.Xna.Framework.Color.Black, "Start");
 
+        public List<Menu> mainmenu = new List<Menu>();
+        public List<Menu> settingsmenu = new List<Menu>();
+
+        Menu start = new Menu(900, 100, 500, 420, Microsoft.Xna.Framework.Color.Black, "Start",true);
+        Menu setting = new Menu(900, 100, 500, 540, Microsoft.Xna.Framework.Color.Black, "Settings",true);
+        Menu exit = new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "Exit",true);
         
+       
 
-
-
-
+        
 
 
         public Game1()
@@ -52,13 +50,9 @@ namespace Aoe3
             
         }
 
-        
-
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            
-            
             mainmenu.Add(new Menu(900, 100, 500, 420, Microsoft.Xna.Framework.Color.Black, "Start", true));
             mainmenu.Add(new Menu(900, 100, 500, 540, Microsoft.Xna.Framework.Color.Black, "Settings", true));
             mainmenu.Add(new Menu(900, 100, 500, 680, Microsoft.Xna.Framework.Color.Black, "Exit", true));
@@ -66,29 +60,17 @@ namespace Aoe3
             settingsmenu.Add(new Menu(140, 100, 1, 1, Microsoft.Xna.Framework.Color.Black, "SoundUp", false));
             settingsmenu.Add(new Menu(900, 100, 500, 880, Microsoft.Xna.Framework.Color.Black, "back", false));
             settingsmenu.Add(new Menu(140, 100, 1, 101, Microsoft.Xna.Framework.Color.Black, "SoundDown", false));
-
-
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            song = Content.Load<Song>("mainmenu");
-
-            MediaPlayer.Play(song);
-            MediaPlayer.IsRepeating = true;
-
-            musicIsActive = true;
-
-
-
-
-
             mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             background = Content.Load<Texture2D>(@"bg");
             backgroundIsActive = true;
+
+            grass = Content.Load<Texture2D>(@"trava");
 
             textMenu = Content.Load<SpriteFont>(@"txtMenu");
             whiteRectangle = new Texture2D(GraphicsDevice, 1, 1);
@@ -96,12 +78,6 @@ namespace Aoe3
 
             // TODO: use this.Content to load your game content here
         }
-
-       
-
-        
-
-
 
         protected override void Update(GameTime gameTime)
         {
@@ -115,10 +91,7 @@ namespace Aoe3
 
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    mainmenu[1].isActive = false;
-                    mainmenu[0].isActive = false;
-                    mainmenu[2].isActive = false;
-                    backgroundIsActive = false;
+                    //загрузка карты
                 }
 
             }
@@ -136,28 +109,28 @@ namespace Aoe3
                 }
             }
 
-            if(settingsmenu[0].rect.Contains(mousePosition)&&settingsmenu[0].isActive==true)
+            if (settingsmenu[0].rect.Contains(mousePosition) && settingsmenu[0].isActive == true)
             {
-               
-                if(mouseState.LeftButton==ButtonState.Pressed)
+
+                if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                   
-                        MediaPlayer.Volume += 0.1f;
-                       
-                   
-                   
+
+                    MediaPlayer.Volume += 0.1f;
+
+
+
                 }
             }
 
-            if(settingsmenu[2].rect.Contains(mousePosition)&&settingsmenu[2].isActive==true)
+            if (settingsmenu[2].rect.Contains(mousePosition) && settingsmenu[2].isActive == true)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
-                { 
+                {
                     MediaPlayer.Volume -= 0.1f;
                 }
 
-                   
-                    
+
+
             }
 
             if (mainmenu[1].rect.Contains(mousePosition) && mainmenu[1].isActive == true)
@@ -188,6 +161,8 @@ namespace Aoe3
             // TODO: Add your update logic here
 
             base.Update(gameTime);
+
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -196,15 +171,15 @@ namespace Aoe3
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
 
-            if(backgroundIsActive==true)
+            if (backgroundIsActive == true)
             {
                 _spriteBatch.Draw(background, mainFrame, Color.White);
             }
-            
 
 
-          // _spriteBatch.Draw(whiteRectangle, new Rectangle(menu.X,menu.Y,menu.Width,menu.Height));
-            Color c =Color.Black;
+
+            // _spriteBatch.Draw(whiteRectangle, new Rectangle(menu.X,menu.Y,menu.Width,menu.Height));
+            Color c = Color.Black;
             Color c1 = Color.Gold;
             if (mainmenu[0].isActive == true)
             {
