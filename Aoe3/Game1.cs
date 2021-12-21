@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Aoe3
 {
@@ -24,6 +25,8 @@ namespace Aoe3
         private SpriteFont textMenu;
         Font font = new Font(10, "Segoe UI", "Bold");
         //Menu start = new Menu(200, 50, 300, 20, Microsoft.Xna.Framework.Color.Black, "Start");
+
+        AScene scene;
 
         public List<Menu> mainmenu = new List<Menu>();
         public List<Menu> settingsmenu = new List<Menu>();
@@ -91,7 +94,11 @@ namespace Aoe3
 
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    //загрузка карты
+                    mainmenu[0].isActive = false;
+                    mainmenu[1].isActive = false;
+                    mainmenu[2].isActive = false;
+                    backgroundIsActive = false;
+                    
                 }
 
             }

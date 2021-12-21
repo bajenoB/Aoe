@@ -46,6 +46,30 @@ namespace Aoe3
                 map[x, y].timer.Start();
 
         }
+
+        public void Read(string path)
+        {
+            try
+            {
+                Map tmp = JsonConvert.DeserializeObject<Map>(File.ReadAllText(path));
+                this.map = tmp.map;
+                
+                //if (tmp.units != null)
+                //{
+                //    for (int i = 0; i < tmp.units.Count; i++)
+                //    {
+                //        map[tmp.unitsCords[i].X, tmp.unitsCords[i].Y].unit = tmp.units[i];
+                //    }
+                //}
+            }
+            catch (Exception)
+            {
+                Map tmp = JsonConvert.DeserializeObject<Map>(File.ReadAllText("map.aoe"));
+                this.map = tmp.map;
+                //this.Gold = tmp.Gold;
+                //this.Wood = tmp.Wood;
+            }
+        }
         public Point CheckPosAround(Point pos)
         {
             int step = 1;
